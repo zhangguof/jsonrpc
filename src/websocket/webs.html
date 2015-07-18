@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="jquery-2.1.1.min.js"></script>
+<script src="rpc.js"></script>
+<link rel="stylesheet" type="text/css" href="webs.css" />
+ 
+<title>WebSockets Client</title>
+ 
+</head>
+<body>
+<div id="wrapper">
+ 
+    <div id="container">
+ 
+        <h1>WebSockets Client</h1>
+ 
+        <div id="chatLog">
+ 
+        </div><!-- #chatLog -->
+        <p id="examples">e.g. try 'hi', 'name', 'age', 'today'</p>
+ 
+        <input id="text" type="text" />
+        <button id="disconnect">Disconnect</button>
+ 
+    </div><!-- #container -->
+ 
+</div>
+
+<script>
+var host = "ws://localhost:9000";
+
+
+function message(msg){
+   	$('#chatLog').append(msg+'</p>');
+    }
+var rpc = rpc_connect(host,{},message);
+
+
+
+</script>
+</body>
+</html>​
