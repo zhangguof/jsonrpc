@@ -23,23 +23,6 @@ class rpcRequestHandler(SocketServer.StreamRequestHandler):
 
 	def handle(self):
 		print "new connect:",self.client_address
-		# while 1:
-		# 	s_struct = struct.Struct("I")
-		# 	size = self.request.recv(4)
-		# 	if not size:
-		# 		print "no size data:closing.."
-		# 		break
-		# 	size = s_struct.unpack(size)[0]
-		# 	print "recv size:%s"%size
-
-		# 	d_struct = struct.Struct("%ds"%size)
-		# 	data = self.request.recv(size)
-		# 	if not data:
-		# 		print "no data closing..."
-		# 		break
-
-		# 	data = d_struct.unpack(data)[0]
-		# 	print "data:%s"%data
 		proxy = rpc.RpcProxy(self.request)
 		while 1:
 			proxy.serve_forever()

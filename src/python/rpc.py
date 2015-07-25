@@ -3,7 +3,7 @@
 import json
 import struct
 import socket,SocketServer,select
-import traceback
+import traceback,sys
 
 #proxy = RpcProxy.server.print("xxxx")
 
@@ -36,8 +36,8 @@ class Service(object):
 
 
 class RpcProxy(object):
-	def __init__(self,s,Service=Service):
-		self.socket = s
+	def __init__(self,socket,Service=Service):
+		self.socket = socket
 		self.service = Service(self)
 
 		sender = self.socket.send
@@ -51,12 +51,10 @@ class RpcProxy(object):
 				sender(pack(json_data))
 
 		class Proxy(object):
-			def __init__(self):
-				self.methods = {}
 			def __getattr__(self,key):
-				if key not in self.methods:
-					self.methods[key] = Method(key)
-				return self.methods[key] 
+				method = Method(key)
+				setattr(self,key,method)
+				return method
 
 		self.remote = Proxy()
 
@@ -67,6 +65,8 @@ class RpcProxy(object):
 		method = self.service.get(method_name)
 		if method:
 			method(*params)
+		else:
+			print >> sys.stderr, "Can't find method name:%s"%method_name
 
 	def on_handler(self):
 		s_struct = struct.Struct("I")
@@ -87,8 +87,8 @@ class RpcProxy(object):
 		json_dict = json.loads(data)
 		self.handler(json_dict)
 
-	def one_tick(self):
-		rs, _, _ = select.select([self.socket],[],[],0.1)
+	def one_tick(self,timeout=0.1):
+		rs, _, _ = select.select([self.socket],[],[],timeout)
 		if rs:
 			self.on_handler()
 
@@ -98,7 +98,7 @@ class RpcProxy(object):
 			while 1:
 				self.one_tick()
 		except:
-			print traceback.format_exc()
+			print >>sys.stderr, traceback.format_exc()
 			raise
 
 
