@@ -15,7 +15,12 @@ def pack(json_data):
 	data = packer.pack(s,d)
 	return data
 
-def unpack(json_str):
+def unpack(data):
+	s_struct = struct.Struct("I")
+	size = s_struct.unpack(data[:4])[0]
+
+	d_struct = struct.Struct("%ds"%size)
+	json_str = d_struct.unpack(data[4:])[0]
 	return json.loads(json_str)
 
 class Service(object):
