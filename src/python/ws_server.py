@@ -7,9 +7,6 @@ import rpc
 
 
 
-
-
-
 class test_web_socket(WebSocket):
 	def received_message(self,message):
 		print "get a msg:",message
