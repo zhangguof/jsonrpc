@@ -41,11 +41,11 @@ class Service(object):
 
 
 class RpcProxy(object):
-	def __init__(self,socket,Service=Service):
+	def __init__(self,socket,Service=Service,_sender=None):
 		self.socket = socket
 		self.service = Service(self)
 
-		sender = self.socket.send
+		sender = _sender or self.socket.send
 
 		class Method(object):
 			def __init__(self,name):
@@ -73,7 +73,7 @@ class RpcProxy(object):
 		else:
 			print >> sys.stderr, "Can't find method name:%s"%method_name
 
-	def on_handler(self):
+	def on_recv_data(self):
 		s_struct = struct.Struct("I")
 		size = self.socket.recv(4)
 		if not size:
@@ -95,7 +95,7 @@ class RpcProxy(object):
 	def one_tick(self,timeout=0.1):
 		rs, _, _ = select.select([self.socket],[],[],timeout)
 		if rs:
-			self.on_handler()
+			self.on_recv_data()
 
 	def serve_forever(self):
 		print "start proxy server."

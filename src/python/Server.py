@@ -30,9 +30,20 @@ class rpcRequestHandler(SocketServer.StreamRequestHandler):
 
 
 
-
 class ThreadServer(SocketServer.ThreadingMixIn,SocketServer.TCPServer):
 	pass
+
+
+class MixServer(object):
+	def __init__(self,make_rpc_server,make_ws_server):
+		pass
+
+
+	def start(self,rpc_host,ws_host):
+		pass
+
+
+
 
 
 
